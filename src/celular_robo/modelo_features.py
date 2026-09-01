@@ -13,6 +13,7 @@ from celular_robo.excecoes import ConfiguracaoInvalida
 
 TIPOS_VALIDOS = set(Robo._registro)
 ESTRATEGIAS_VALIDAS = set(RotaColeta._registro_rotas)
+
 AREAS_VALIDAS = {
     "centro_padrao",
     "area_quarentena",

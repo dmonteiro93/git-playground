@@ -76,5 +76,5 @@ class RoboColetor(Robo):
         self.bandeja = bandeja
 
     def __len__(self):
-        return sum(self.bandeja.values())
+        return len(self.bandeja)
         

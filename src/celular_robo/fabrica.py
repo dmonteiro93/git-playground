@@ -11,12 +11,27 @@
 #
 #   criar_robo_configurado(tipo_nome, nome, estrategia_nome=..., area_nome=...)
 
+
 from celular_robo.fabrica_base import criar_robo
 from celular_robo.modelo_features import validar_configuracao
+from celular_robo.modelo_features import RotaColeta
+from celular_robo.modelo_features import AREAS_VALIDAS
+from celular_robo.robo_base import Robo
+
+
+def obter_obstaculos(area_nome):
+    if area_nome == "centro_padrao":
+        obstaculos = set()
+    elif area_nome == "area_quarentena":
+        obstaculos = {(9,0),(9,1),(9,2),(9,3),(9,4),(9,5),(9,6),(9,7),(9,8),(9,9),}
+    return obstaculos
 
 def criar_robo_coletor(tipo_nome, nome, **kwargs):
     return criar_robo(tipo_nome, nome, **kwargs)
 
 def criar_robo_configurado(tipo_nome, nome, estrategia_nome, area_nome):
     validar_configuracao(tipo_nome,estrategia_nome, area_nome)
-    return criar_robo_coletor(tipo_nome, nome, estrategia_nome, area_nome) #Ainda não está correto, robo não recebe estrategia_nome e area_nome apenas
+    classe_estrategia = RotaColeta._registro_rotas[estrategia_nome]
+    estrategia = classe_estrategia()
+    obstaculos = obter_obstaculos(area_nome)
+    return criar_robo_coletor(tipo_nome, nome, estrategia_nome=estrategia, area_nome=obstaculos) 

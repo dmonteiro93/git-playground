@@ -7,6 +7,7 @@
 # __init_subclass__ registrando cada rota, ver Seção 2.2 (metaprogramação
 # aplicada a uma segunda hierarquia).
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
