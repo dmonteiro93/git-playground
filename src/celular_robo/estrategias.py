@@ -54,7 +54,7 @@ class RotaDireta(RotaColeta, nome="direta"):
     def coletar(self, robo, item):
         self._ir_ate_item(robo, item)
 
-        item.quantidade = item.quantidade_requerida
+        item.quantidade_coletada = item.quantidade_requerida
         robo.bandeja.adicionar(item)
 
 class RotaComDuplaConferencia(RotaColeta, nome="dupla_conferencia"):
@@ -64,5 +64,5 @@ class RotaComDuplaConferencia(RotaColeta, nome="dupla_conferencia"):
         if robo.posicao != item.posicao:
             raise RuntimeError("Item não está na posição esperada.")
 
-        item.quantidade = item.quantidade_requerida
+        item.quantidade_coletada = item.quantidade_requerida
         robo.bandeja.adicionar(item)

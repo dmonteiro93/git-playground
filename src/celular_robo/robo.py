@@ -14,8 +14,9 @@ from celular_robo.estrategias import RotaColeta
 #   negativa nem passa do pedido.
 # - __str__/__repr__ (robô) e __len__ (bandeja — quantos itens já coletados).
 
+    
 
-class QuantidadeValida():
+class QuantidadeValida:
     def __set_name__(self, owner, name):
         self.nome = "_" + name
 
@@ -32,7 +33,7 @@ class QuantidadeValida():
         instance.__dict__[self.nome] = valor
 
 class ItemPedido:
-    quantidade = QuantidadeValida()
+    quantidade_coletada = QuantidadeValida()
 
     def __init__(self, codinome, quantidade_requerida, posicao,
                  fragil=False, urgente=False):
@@ -41,26 +42,38 @@ class ItemPedido:
         self.posicao = tuple(posicao)
         self.fragil = fragil
         self.urgente = urgente
-        self.quantidade = 0
+        self.quantidade_coletada = 0
 
     def __repr__(self):
         return (
             f"ItemPedido(codinome={self.codinome!r}, "
-            f"quantidade={self.quantidade}, "
+            f"quantidade={self.quantidade_coletada}, "
             f"posicao={self.posicao}, "
             f"fragil={self.fragil}, "
             f"urgente={self.urgente})"
         )
 
     def __str__(self):
-        return f"{self.codinome}: {self.quantidade} unidade(s)"
+        return f"{self.codinome}: {self.quantidade_coletada} unidade(s)"
+
+
+class Pedido:
+    def __init__(self, lote, itens : list):
+        self.lote = lote
+        self.itens = itens
+
+    def __repr__(self):
+        return f"Pedido(lote={self.lote!r}, itens={self.itens!r})"
+
+    def __str__(self):
+        return f"Lote: {self.lote}\nItens: {self.itens}"
 
 class Bandeja:
     def __init__(self, itens):
         self.itens = {} if itens is None else itens
 
     def __len__(self):
-        return sum(item.quantidade for item in self.itens.values())
+        return sum(item.quantidade_coletada for item in self.itens.values())
 
     def adicionar(self, item):
         self.itens[item.codinome] = item

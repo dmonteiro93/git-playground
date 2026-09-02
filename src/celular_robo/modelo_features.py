@@ -9,6 +9,7 @@ from celular_robo.robo_base import Robo
 from celular_robo.robo import RoboColetor
 from celular_robo.estrategias import RotaColeta
 from celular_robo.excecoes import ConfiguracaoInvalida
+from celular_robo.excecoes import PedidoInvalido
 
 
 TIPOS_VALIDOS = set(Robo._registro)
@@ -43,7 +44,16 @@ def validar_configuracao(tipo_nome, estrategia_nome, area_nome):
         raise ConfiguracaoInvalida("Configuração não permitida")
 
 
-def validar_pedido():
-    pass
+def validar_pedido(pedido, disponibilidade):
+    if not pedido.itens:
+        raise PedidoInvalido
+    for item in pedido.itens:
+        if item.codinome not in disponibilidade:
+            raise PedidoInvalido
+        if not item.quantidade_requerida > disponibilidade[item.codinome]:
+            raise PedidoInvalido
+        if item.fragil and item.urgente:
+            raise PedidoInvalido
+    
 
     
