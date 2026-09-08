@@ -1,2 +1,98 @@
 # TODO: seus testes de configuração/LPS — enunciado, Seção 2.7 (pytest.raises,
 # @pytest.mark.parametrize cobrindo estratégia×área).
+import pytest
+
+from celular_robo.modelo_features import validar_pedido
+from celular_robo.robo import Pedido, ItemPedido
+from celular_robo.excecoes import PedidoInvalido
+from celular_robo.fabrica import criar_robo_configurado
+from celular_robo.modelo_features import RotaColeta
+from celular_robo.excecoes import ConfiguracaoInvalida
+from celular_robo.modos import ModoColetando, ModoAguardandoVerificacao
+from celular_robo.observadores import EquipeDeTestes
+
+
+def test_pedido_com_codinome_inexistente():
+    item = ItemPedido(
+        "ProjetoInexistente",
+        1,
+        (0, 0)
+    )
+
+    pedido = Pedido(
+        "Lote-1",
+        [item]
+    )
+
+    disponibilidade = {
+        "Aurora": 10,
+        "Vesper": 5,
+    }
+
+    with pytest.raises(PedidoInvalido):
+        validar_pedido(pedido, disponibilidade)
+
+
+@pytest.mark.parametrize(
+    "estrategia, area, deve_criar",
+    [
+        ("direta", "centro_padrao", True),
+        ("dupla_conferencia", "centro_padrao", True),
+        ("direta", "area_quarentena", False),
+    ],
+)
+def test_contrato_criar_ou_recusar(estrategia, area, deve_criar):
+    if deve_criar:
+        robo = criar_robo_configurado(
+        "RoboColetor",
+        "Teste",
+        estrategia_nome=estrategia,
+        area_nome=area,
+    )
+        classe_esperada = RotaColeta._registro_rotas[estrategia]
+        assert isinstance(robo.estrategia, classe_esperada)
+    else:
+        with pytest.raises(ConfiguracaoInvalida):
+            criar_robo_configurado(
+                "RoboColetor",
+                "Teste",
+                estrategia_nome=estrategia,
+                area_nome=area,
+            )
+
+def test_area_quarentena_possui_obstaculos():
+    robo = criar_robo_configurado(
+        "RoboColetor",
+        "Coletor-Teste",
+        estrategia_nome="dupla_conferencia",
+        area_nome="area_quarentena",
+    )
+
+    assert len(robo.obstaculos) > 0
+
+def test_robo_coletor_comeca_no_modo_coletando():
+    robo = criar_robo_configurado(
+        "RoboColetor",
+        "Coletor-Teste",
+        estrategia_nome="direta",
+        area_nome="centro_padrao",
+    )
+
+    assert isinstance(robo.modo, ModoColetando)
+
+def test_bandeja_pronta_muda_modo():
+    robo = criar_robo_configurado(
+        "RoboColetor",
+        "Coletor-Teste",
+        estrategia_nome="direta",
+        area_nome="centro_padrao",
+    )
+
+    equipe = EquipeDeTestes()
+    robo.adicionar_observador(equipe)
+
+    assert isinstance(robo.modo, ModoColetando)
+
+    robo.notificar("bandeja_pronta")
+
+    assert isinstance(robo.modo, ModoAguardandoVerificacao)

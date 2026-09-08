@@ -17,6 +17,8 @@ from celular_robo.modelo_features import validar_configuracao
 from celular_robo.modelo_features import RotaColeta
 from celular_robo.modelo_features import AREAS_VALIDAS
 from celular_robo.robo_base import Robo
+from celular_robo.robo import Bandeja
+from celular_robo.modos import ModoColetando
 
 
 def obter_obstaculos(area_nome):
@@ -34,4 +36,6 @@ def criar_robo_configurado(tipo_nome, nome, estrategia_nome, area_nome):
     classe_estrategia = RotaColeta._registro_rotas[estrategia_nome]
     estrategia = classe_estrategia()
     obstaculos = obter_obstaculos(area_nome)
-    return criar_robo_coletor(tipo_nome, nome, estrategia_nome=estrategia, area_nome=obstaculos) 
+    bandeja = Bandeja(None)
+    modo = ModoColetando()
+    return criar_robo_coletor(tipo_nome, nome, bandeja=bandeja, estrategia=estrategia, obstaculos=obstaculos, modo=modo) 
