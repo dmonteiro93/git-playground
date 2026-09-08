@@ -47,10 +47,16 @@ def validar_configuracao(tipo_nome, estrategia_nome, area_nome):
 def validar_pedido(pedido, disponibilidade):
     if not pedido.itens:
         raise PedidoInvalido
+    
+    tem_urgente = any(item.urgente for item in pedido.itens)
+    tem_fragil = any(item.fragil for item in pedido.itens)
+
+    if tem_urgente and tem_fragil:
+        raise PedidoInvalido
     for item in pedido.itens:
         if item.codinome not in disponibilidade:
             raise PedidoInvalido
-        if not item.quantidade_requerida > disponibilidade[item.codinome]:
+        if item.quantidade_requerida > disponibilidade[item.codinome]:
             raise PedidoInvalido
         if item.fragil and item.urgente:
             raise PedidoInvalido
