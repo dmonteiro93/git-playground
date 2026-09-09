@@ -6,10 +6,11 @@
 # ConfiguracaoInvalida antes de qualquer robô ser instanciado.
 
 from celular_robo.robo_base import Robo
-from celular_robo.robo import RoboColetor
+from celular_robo.robo import RoboColetor, Pedido
 from celular_robo.estrategias import RotaColeta
 from celular_robo.excecoes import ConfiguracaoInvalida
 from celular_robo.excecoes import PedidoInvalido
+
 
 
 TIPOS_VALIDOS = set(Robo._registro)
@@ -61,5 +62,5 @@ def validar_pedido(pedido, disponibilidade):
         if item.fragil and item.urgente:
             raise PedidoInvalido
     
-
+Pedido.()
     

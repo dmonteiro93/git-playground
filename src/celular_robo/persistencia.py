@@ -7,11 +7,12 @@
 import json
 from celular_robo.robo import ItemPedido
 from celular_robo.robo import Pedido
+from celular_robo.fabrica import criar_robo_configurado
 
 
-def montar_pedido_json(caminho):
+def montar_pedido_de_json(caminho_pedido, caminho_catalogo):
     itens = []
-    with open(caminho, "r", encoding="utf-8") as arquivo:
+    with open(caminho_pedido, "r", encoding="utf-8") as arquivo:
         dados = json.load(arquivo)
         for item in dados["itens"]:
             item_pedido = ItemPedido(
@@ -26,8 +27,15 @@ def montar_pedido_json(caminho):
     return pedido
 
 
-def montar_robo_de_config(caminho):
-    pass
+def montar_robo_de_config(config):
+    with open(config, "r", encoding="utf-8") as arquivo:
+        dados = json.load(arquivo)
+        return criar_robo_configurado(
+                                        dados["tipo"],
+                                        dados["nome"],
+                                        dados["estrategia"],
+                                        dados["area"]
+                                    )                                       
 
 def montar_frota_de_json(caminho):
     pass
@@ -36,3 +44,4 @@ def ler_catalogo(caminho):
     with open(caminho, "r", encoding="utf-8") as arquivo:
         dados = json.load(arquivo)
     return dados
+

@@ -68,6 +68,14 @@ class Pedido:
     def __str__(self):
         return f"Lote: {self.lote}\nItens: {self.itens}"
 
+    def pedido_pronto(self):
+        pronto = False
+        for item in self.itens:
+            if item.quantidade_coletada != item.quantidade_requerida:
+                return False
+        return True
+
+
 class Bandeja:
     def __init__(self, itens):
         self.itens = {} if itens is None else itens
@@ -87,7 +95,10 @@ class RoboColetor(Robo):
     def __init__(self, nome, bandeja, x=0, y=0, direcao=Direcao.LESTE, obstaculos=None, bateria=100, alcance_sensor=1, alcance_radio=5, estrategia=None, modo=None):
         super().__init__(nome, x, y, direcao, obstaculos, bateria, alcance_sensor, alcance_radio, estrategia, modo)
         self.bandeja = bandeja
+        self.pedido = None
 
     def __len__(self):
         return len(self.bandeja)
-        
+
+    def receber_pedido(self, pedido):
+        self.pedido = pedido
