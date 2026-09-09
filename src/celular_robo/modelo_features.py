@@ -62,5 +62,3 @@ def validar_pedido(pedido, disponibilidade):
         if item.fragil and item.urgente:
             raise PedidoInvalido
     
-Pedido.()
-    

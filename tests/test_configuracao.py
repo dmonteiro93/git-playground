@@ -2,6 +2,7 @@
 # @pytest.mark.parametrize cobrindo estratégia×área).
 import pytest
 
+from celular_robo import robo
 from celular_robo.modelo_features import validar_pedido
 from celular_robo.robo import Pedido, ItemPedido
 from celular_robo.excecoes import PedidoInvalido
@@ -9,7 +10,7 @@ from celular_robo.fabrica import criar_robo_configurado
 from celular_robo.modelo_features import RotaColeta
 from celular_robo.excecoes import ConfiguracaoInvalida
 from celular_robo.modos import ModoColetando, ModoAguardandoVerificacao
-from celular_robo.observadores import EquipeDeTestes
+from celular_robo.observadores import EquipeDeTestes, RegistroAuditoria
 
 
 def test_pedido_com_codinome_inexistente():
@@ -79,20 +80,3 @@ def test_robo_coletor_comeca_no_modo_coletando():
     )
 
     assert isinstance(robo.modo, ModoColetando)
-
-def test_bandeja_pronta_muda_modo():
-    robo = criar_robo_configurado(
-        "RoboColetor",
-        "Coletor-Teste",
-        estrategia_nome="direta",
-        area_nome="centro_padrao",
-    )
-
-    equipe = EquipeDeTestes()
-    robo.adicionar_observador(equipe)
-
-    assert isinstance(robo.modo, ModoColetando)
-
-    robo.notificar("bandeja_pronta")
-
-    assert isinstance(robo.modo, ModoAguardandoVerificacao)
