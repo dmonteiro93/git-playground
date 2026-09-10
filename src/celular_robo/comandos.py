@@ -9,8 +9,7 @@
 # bandeja, decrementa a contagem coletada).
 
 from celular_robo.comandos_base import Comando
-from celular_robo.robo import RoboColetor
-from celular_robo.robo import RoboColetor, ItemPedido, Pedido
+from celular_robo.robo import RoboColetor, ItemPedido
 
 class ComandoColeta(Comando):
     def __init__(self, item : ItemPedido):
@@ -19,14 +18,15 @@ class ComandoColeta(Comando):
     def __repr__(self):
             return (
                     f"ComandoColeta("
-                    f"Coletados {self.item.quantidade} "
+                    f"Coletados {self.item.quantidade_coletada} "
                     f"de {self.item.codinome} "
                     f"na posicao {self.item.posicao})"
     )
     def executar(self, robo : RoboColetor):
-        robo.estrategia.coletar(robo, self.item)
-        if robo.pedido.pedido_pronto():
-             robo.notificar("Bandeja Pronta")
+        if robo.modo.apto_para_operar():
+            robo.estrategia.coletar(robo, self.item)
+            if robo.pedido.pedido_pronto():
+                robo.notificar("Bandeja Pronta")
 
     def desfazer(self, robo: RoboColetor):
         robo.bandeja.remover(self.item)

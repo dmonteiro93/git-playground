@@ -26,9 +26,6 @@ class RotaColeta(ABC):
         if nome is not None:
             RotaColeta._registro_rotas[nome] = cls
 
-    @abstractmethod
-    def coletar(self, robo, item):
-        ...
 
     def _ir_ate_item(self, robo : RoboColetor, item):
             xitem,yitem = item.posicao
