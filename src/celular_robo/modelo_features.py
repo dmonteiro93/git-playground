@@ -45,7 +45,7 @@ def validar_configuracao(tipo_nome, estrategia_nome, area_nome):
         raise ConfiguracaoInvalida("Configuração não permitida")
 
 
-def validar_pedido(pedido, disponibilidade):
+def validar_pedido(pedido, disponibilidade, estrategia_nome = None):
     if not pedido.itens:
         raise PedidoInvalido
     
@@ -61,4 +61,11 @@ def validar_pedido(pedido, disponibilidade):
             raise PedidoInvalido
         if item.fragil and item.urgente:
             raise PedidoInvalido
-    
+
+    if estrategia_nome is not None:
+        for item in pedido.itens:
+            if item.urgente and estrategia_nome != "direta":
+                raise PedidoInvalido
+
+            if item.fragil and estrategia_nome != "dupla_conferencia":
+                raise PedidoInvalido

@@ -3,7 +3,7 @@
 import pytest
 
 from celular_robo import robo
-from celular_robo.modelo_features import validar_pedido
+from celular_robo.modelo_features import validar_configuracao, validar_pedido
 from celular_robo.robo import Pedido, ItemPedido
 from celular_robo.excecoes import PedidoInvalido
 from celular_robo.fabrica import criar_robo_configurado
@@ -80,3 +80,89 @@ def test_robo_coletor_comeca_no_modo_coletando():
     )
 
     assert isinstance(robo.modo, ModoColetando)
+
+def test_pedido_com_quantidade_maior_que_disponivel():
+    item = ItemPedido(
+        "Aurora",
+        11,
+        (0, 0)
+    )
+
+    pedido = Pedido(
+        "Lote-1",
+        [item]
+    )
+
+    disponibilidade = {
+        "Aurora": 10,
+        "Vesper": 5,
+    }
+
+    with pytest.raises(PedidoInvalido):
+        validar_pedido(pedido, disponibilidade)
+
+
+def test_pedido_vazio_e_invalido():
+    pedido = Pedido("Lote-1", [])
+
+    disponibilidade = {
+        "Aurora": 10,
+        "Vesper": 5,
+    }
+
+    with pytest.raises(PedidoInvalido):
+        validar_pedido(pedido, disponibilidade)
+
+
+def test_pedido_misto_com_urgente_e_fragil_e_invalido():
+    item_urgente = ItemPedido(
+        "Aurora",
+        1,
+        (0, 0),
+        urgente=True
+    )
+
+    item_fragil = ItemPedido(
+        "Vesper",
+        1,
+        (1, 1),
+        fragil=True
+    )
+
+    pedido = Pedido(
+        "Lote-1",
+        [item_urgente, item_fragil]
+    )
+
+    disponibilidade = {
+        "Aurora": 10,
+        "Vesper": 5,
+    }
+
+    with pytest.raises(PedidoInvalido):
+        validar_pedido(pedido, disponibilidade)
+
+
+@pytest.mark.parametrize(
+    "estrategia,area",
+    [
+        ("direta", "centro_padrao"),
+        ("dupla_conferencia", "centro_padrao"),
+        ("dupla_conferencia", "area_quarentena"),
+    ],
+)
+def test_combinacoes_validas_de_estrategia_e_area(estrategia, area):
+    validar_configuracao(
+        "RoboColetor",
+        estrategia,
+        area,
+    )
+
+
+def test_rota_direta_na_area_quarentena_e_invalida():
+    with pytest.raises(ConfiguracaoInvalida):
+        validar_configuracao(
+            "RoboColetor",
+            "direta",
+            "area_quarentena",
+        )

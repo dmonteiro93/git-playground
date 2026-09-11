@@ -14,11 +14,8 @@ from celular_robo.modos import ModoAguardandoVerificacao
 
 class EquipeDeTestes(Observador):
     def atualizar(self, evento, **dados):
-        print("Equipe recebeu:", evento)
         if evento == "Bandeja Pronta":
-            print("Modo antes:", dados["robo"].modo)
             dados["robo"].modo = ModoAguardandoVerificacao()
-            print("Modo depois:", dados["robo"].modo)
 
 class RegistroAuditoria(Observador):
     def __init__(self):

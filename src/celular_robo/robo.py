@@ -75,6 +75,8 @@ class Pedido:
                 return False
         return True
 
+    
+
 
 class Bandeja:
     def __init__(self, itens):
@@ -96,9 +98,26 @@ class RoboColetor(Robo):
         super().__init__(nome, x, y, direcao, obstaculos, bateria, alcance_sensor, alcance_radio, estrategia, modo)
         self.bandeja = bandeja
         self.pedido = None
+        self._historico_comandos = []
 
     def __len__(self):
         return len(self.bandeja)
 
     def receber_pedido(self, pedido):
         self.pedido = pedido
+
+    def verificar_bandeja(self, aprovada):
+        return self.modo.verificar_bandeja(self, aprovada)
+
+    def executar_comando(self, comando):
+        comando.executar(self)
+        self._historico_comandos.append(comando)
+
+    def desfazer_ultimo_comando(self):
+        if not self._historico_comandos:
+            return False
+
+        comando = self._historico_comandos.pop()
+        comando.desfazer(self)
+
+        return True

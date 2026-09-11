@@ -16,6 +16,7 @@ from celular_robo.fabrica_base import criar_robo
 from celular_robo.modelo_features import validar_configuracao
 from celular_robo.modelo_features import RotaColeta
 from celular_robo.modelo_features import AREAS_VALIDAS
+from celular_robo.observadores import EquipeDeTestes, RegistroAuditoria
 from celular_robo.robo_base import Robo
 from celular_robo.robo import Bandeja
 from celular_robo.modos import ModoColetando
@@ -38,4 +39,17 @@ def criar_robo_configurado(tipo_nome, nome, estrategia_nome, area_nome):
     obstaculos = obter_obstaculos(area_nome)
     bandeja = Bandeja(None)
     modo = ModoColetando()
-    return criar_robo_coletor(tipo_nome, nome, bandeja=bandeja, estrategia=estrategia, obstaculos=obstaculos, modo=modo) 
+
+    robo = criar_robo_coletor(
+        tipo_nome,
+        nome,
+        bandeja=bandeja,
+        estrategia=estrategia,
+        obstaculos=obstaculos,
+        modo=modo,
+    )
+
+    robo.adicionar_observador(EquipeDeTestes())
+    robo.adicionar_observador(RegistroAuditoria())
+
+    return robo

@@ -11,22 +11,59 @@
 from celular_robo.comandos_base import Comando
 from celular_robo.robo import RoboColetor, ItemPedido
 
+
+def criar_comandos_do_pedido(pedido):
+        comandos = []
+        for item in pedido.itens:
+            comando = ComandoColeta(item)
+            comandos.append(comando)
+        return comandos
+
+def executar_pedido(robo):
+    comandos = criar_comandos_do_pedido(robo.pedido)
+
+    for comando in comandos:
+        robo.executar_comando(comando)
+
+
 class ComandoColeta(Comando):
-    def __init__(self, item : ItemPedido):
-        self.item = item
+    def __init__(self, codinome, posicao=None, quantidade=None):
+        if isinstance(codinome, ItemPedido):
+            self.item = codinome
+            self.codinome = codinome.codinome
+            self.posicao = codinome.posicao
+            self.quantidade = codinome.quantidade_requerida
+        else:
+            self.codinome = codinome
+            self.posicao = tuple(posicao)
+            self.quantidade = quantidade
+            self.item = None
 
     def __repr__(self):
-            return (
-                    f"ComandoColeta("
-                    f"Coletados {self.item.quantidade_coletada} "
-                    f"de {self.item.codinome} "
-                    f"na posicao {self.item.posicao})"
-    )
-    def executar(self, robo : RoboColetor):
-        if robo.modo.apto_para_operar():
-            robo.estrategia.coletar(robo, self.item)
+        return (
+            f"ComandoColeta("
+            f"{self.quantidade} de {self.codinome} "
+            f"na posicao {self.posicao})"
+        )
+
+    def executar(self, robo: RoboColetor):
+        if self.item is None:
+            self.item = next(
+                item
+                for item in robo.pedido.itens
+                if item.codinome == self.codinome
+            )
+
+        coletou = robo.modo.executar_coleta(robo, self.item)
+
+        if coletou:
+            robo.notificar("coleta")
+
             if robo.pedido.pedido_pronto():
                 robo.notificar("Bandeja Pronta")
 
     def desfazer(self, robo: RoboColetor):
         robo.bandeja.remover(self.item)
+        self.item.quantidade_coletada -= self.quantidade
+
+    
