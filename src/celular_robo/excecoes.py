@@ -4,12 +4,12 @@
 # ConfiguracaoInvalida(ErroColeta) e PedidoInvalido(ErroColeta) como as duas
 # subclasses (ver Seção 2.5 pra critério de qual usar em cada caso).
 class ErroColeta(Exception):
-    pass
+    """Exceção base para erros relacionados ao sistema de coleta."""
 
 
 class ConfiguracaoInvalida(ErroColeta):
-    pass
+     """Indica que uma configuração de robô não é permitida."""
 
 
 class PedidoInvalido(ErroColeta):
-    pass
+    """Indica que um pedido não atende às regras do sistema."""
