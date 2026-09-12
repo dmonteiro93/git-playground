@@ -23,7 +23,10 @@ AREAS_VALIDAS = {
 
 EXCLUI = {("area_quarentena", "direta")}
 
-REQUER = {()}
+REQUER = {
+    "urgente": "direta",
+    "fragil": "dupla_conferencia",
+}
 
 #Validação de tipos > estratégia > área > e por fim se essa combinação tripla é permitida
 def validar_configuracao(tipo_nome, estrategia_nome, area_nome):
@@ -64,8 +67,8 @@ def validar_pedido(pedido, disponibilidade, estrategia_nome = None):
 
     if estrategia_nome is not None:
         for item in pedido.itens:
-            if item.urgente and estrategia_nome != "direta":
+            if item.urgente and estrategia_nome != REQUER["urgente"]:
                 raise PedidoInvalido
 
-            if item.fragil and estrategia_nome != "dupla_conferencia":
+            if item.fragil and estrategia_nome != REQUER["fragil"]:
                 raise PedidoInvalido
