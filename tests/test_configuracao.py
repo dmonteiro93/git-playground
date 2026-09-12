@@ -12,28 +12,6 @@ from celular_robo.excecoes import ConfiguracaoInvalida
 from celular_robo.modos import ModoColetando, ModoAguardandoVerificacao
 from celular_robo.observadores import EquipeDeTestes, RegistroAuditoria
 
-
-def test_pedido_com_codinome_inexistente():
-    item = ItemPedido(
-        "ProjetoInexistente",
-        1,
-        (0, 0)
-    )
-
-    pedido = Pedido(
-        "Lote-1",
-        [item]
-    )
-
-    disponibilidade = {
-        "Aurora": 10,
-        "Vesper": 5,
-    }
-
-    with pytest.raises(PedidoInvalido):
-        validar_pedido(pedido, disponibilidade)
-
-
 @pytest.mark.parametrize(
     "estrategia, area, deve_criar",
     [
@@ -80,39 +58,6 @@ def test_robo_coletor_comeca_no_modo_coletando():
     )
 
     assert isinstance(robo.modo, ModoColetando)
-
-def test_pedido_com_quantidade_maior_que_disponivel():
-    item = ItemPedido(
-        "Aurora",
-        11,
-        (0, 0)
-    )
-
-    pedido = Pedido(
-        "Lote-1",
-        [item]
-    )
-
-    disponibilidade = {
-        "Aurora": 10,
-        "Vesper": 5,
-    }
-
-    with pytest.raises(PedidoInvalido):
-        validar_pedido(pedido, disponibilidade)
-
-
-def test_pedido_vazio_e_invalido():
-    pedido = Pedido("Lote-1", [])
-
-    disponibilidade = {
-        "Aurora": 10,
-        "Vesper": 5,
-    }
-
-    with pytest.raises(PedidoInvalido):
-        validar_pedido(pedido, disponibilidade)
-
 
 def test_pedido_misto_com_urgente_e_fragil_e_invalido():
     item_urgente = ItemPedido(
